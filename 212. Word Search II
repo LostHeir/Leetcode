@@ -1,0 +1,50 @@
+class Solution:
+    def find(self, element: str, matrix: List[List[str]]) -> List[tuple]:
+        result = []
+        for i, matrix_i in enumerate(matrix):
+            for j, value in enumerate(matrix_i):
+                if value == element:
+                    result.append((i,j))
+        return result
+    
+    def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
+        result = []
+        for word in words:
+            skip_word = False 
+            for letter in word:
+                next_poss = False
+                print(letter)
+                start_points = self.find(letter,board)
+                if not start_points:
+                    skip_word = True
+                    break
+                for points in start_points:
+                    failure = False
+                    try:
+                        next_letter = word[word.index(letter)+1]
+                        # if next_letter == word[word.index(letter)-1]:
+                        #     print(letter, "same")
+                        #     skip_word = True
+                        #     break
+                    except IndexError:
+                        break
+                    next_points = self.find(next_letter, board)
+                    perv_points = self.find
+                    for n_points in next_points:
+                        if n_points[0] in range(points[0]-1,points[0]+2) and n_points[1] in range(points[1]-1,points[1]+2):
+                            failure = False
+                            next_poss = True
+                            break
+                        failure = True
+                        if failure:
+                            print(word, "fail", letter)
+                            skip_word = True
+                            break
+                    if next_poss:
+                        print(letter, "next poss")
+                        break
+            if skip_word:
+                print("pass", word)
+                continue
+            result.append(word)
+        return result
