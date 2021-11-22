@@ -1,50 +1,36 @@
+# In this approach I used trie structure
+
 class Solution:
-    def find(self, element: str, matrix: List[List[str]]) -> List[tuple]:
-        result = []
-        for i, matrix_i in enumerate(matrix):
-            for j, value in enumerate(matrix_i):
-                if value == element:
-                    result.append((i,j))
-        return result
+    def buildTrie(self, words: List[str]) -> dict:
+        trie = {}
+        for word in words:
+            node = trie
+            for c in word:
+                if c not in node:
+                    node[c] = {}
+                node = node[c]
+            node['$'] = word
+        return trie
+    
+    def dfs(self, i: int, j: int, trie: dict, result: List[str]) -> None:
+        char = self.board[i][j]
+        last = trie[char].pop('$', False)
+        if last:
+            result.append(last)
+        self.board[i][j] = '#'
+        for x,y in ((1,0), (-1,0), (0,1), (0,-1)):
+            ni, nj = i + x, j + y
+            if 0 <= ni < self.ROW and 0 <= nj < self.COL and self.board[ni][nj] in trie[char]:
+                self.dfs(ni, nj, trie[char], result)
+        self.board[i][j] = char
     
     def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
+        self.board = board
+        self.ROW, self.COL = len(board), len(board[0])
         result = []
-        for word in words:
-            skip_word = False 
-            for letter in word:
-                next_poss = False
-                print(letter)
-                start_points = self.find(letter,board)
-                if not start_points:
-                    skip_word = True
-                    break
-                for points in start_points:
-                    failure = False
-                    try:
-                        next_letter = word[word.index(letter)+1]
-                        # if next_letter == word[word.index(letter)-1]:
-                        #     print(letter, "same")
-                        #     skip_word = True
-                        #     break
-                    except IndexError:
-                        break
-                    next_points = self.find(next_letter, board)
-                    perv_points = self.find
-                    for n_points in next_points:
-                        if n_points[0] in range(points[0]-1,points[0]+2) and n_points[1] in range(points[1]-1,points[1]+2):
-                            failure = False
-                            next_poss = True
-                            break
-                        failure = True
-                        if failure:
-                            print(word, "fail", letter)
-                            skip_word = True
-                            break
-                    if next_poss:
-                        print(letter, "next poss")
-                        break
-            if skip_word:
-                print("pass", word)
-                continue
-            result.append(word)
+        trie = self.buildTrie(words)
+        for i in range(self.ROW):
+            for j in range(self.COL):
+                if board[i][j] in trie:
+                    self.dfs(i, j, trie, result)
         return result
