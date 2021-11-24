@@ -1,31 +1,21 @@
+#Given a string s, find the length of the longest substring without repeating characters.
+
 class Solution:
-    def isRepeated(self, ch: str) -> bool:
-        if ch in self.data:
-            return True
-        self.data.append(ch)
-        return False
-    
-    
+    def check(self, s: str) -> None:
+        word = []
+        possible = True
+        for ch in s:
+            if ch not in word:
+                word.append(ch)
+            else:
+                break
+        if len(s) > 1:
+            self.check(s[1:])            
+        self.data.append(word)
+
+                
     def lengthOfLongestSubstring(self, s: str) -> int:
         self.data = []
-        self.r_indecies = [i for i in range(len(s)) if self.isRepeated(s[i])]
+        self.check(s)        
+        return max([len(item) for item in self.data])
         
-        start, stop = 0, 0
-        result = []
-        
-        for index in self.r_indecies:
-            
-            if index - start > stop - start:
-                stop = index
-                result.append(stop-start)
-                start = index
-            
-        if result:
-            return max(result)
-        else:
-            if len(s) == 1:
-                return 1
-            elif len(s) == 2:
-                return 2
-            else:
-                return 0
