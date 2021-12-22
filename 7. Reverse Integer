@@ -1,0 +1,17 @@
+# Given a signed 32-bit integer x, return x with its digits reversed. If reversing x causes the value to go outside the signed 32-bit integer range [-231, 231 - 1], then return 0.
+
+class Solution:
+    def reverse(self, x: int) -> int:
+        limit = 0x80000000
+        if abs(x) > limit:
+            return 0
+        s = str(x)
+        if s[0].isdigit():
+            to_ret = int(s[::-1])
+        else:
+            s = "-" + s[:0:-1]
+            to_ret =  int(s)
+        if abs(to_ret) <= limit:
+            return to_ret
+        else:
+            return 0
